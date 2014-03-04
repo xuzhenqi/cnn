@@ -1,4 +1,4 @@
-function convolvedFeatures = cnnConvolve(images, W, b, con_matrix)
+function convolvedFeatures = cnnConvolve(images, W, b, nonlineartype, con_matrix)
 %cnnConvolve Returns the convolution of the features given by W and b with
 %the given images
 %
@@ -8,6 +8,11 @@ function convolvedFeatures = cnnConvolve(images, W, b, con_matrix)
 %  W, b - W, b 
 %         W is of shape (filterDim,filterDim,channel,numFilters)
 %         b is of shape (numFilters,1)
+%  nonlineartype - the type of non-linear type
+%         'sigmoid' : default. use sigmoid function
+%         'relu'    : rectified linear function
+%         'tanh'
+%         'softsign'
 %  con_matrix -
 %         the connection between input channel and output maps. If the ith
 %         input channel has connection with jth output map, then
@@ -19,8 +24,12 @@ function convolvedFeatures = cnnConvolve(images, W, b, con_matrix)
 
 [filterDimRow,filterDimCol,channel,numFilters] = size(W);
 
-if nargin < 4
+if ~exist('con_matrix','var') || isempty(con_matrix)
     con_matrix = ones(channel, numFilters);
+end
+
+if ~exist('nonlineartype','var')
+    nonlineartype = 'sigmoid';
 end
 
 [imageDimRow, imageDimCol,~, numImages] = size(images);
@@ -31,8 +40,6 @@ convolvedFeatures = zeros(convDimRow, convDimCol, numFilters, numImages);
 
 %   Convolve every filter with every image here to produce the convolvedFeatures, such that 
 %   convolvedFeatures(imageRow, imageCol, featureNum, imageNum)
-
-
 
 for imageNum = 1:numImages
   for filterNum = 1:numFilters
@@ -58,6 +65,17 @@ for imageNum = 1:numImages
       end
   end
 end
-
+switch nonlineartype
+    case 'sigmoid'
+        convolvedFeatures = 1./(1+exp(-convolvedFeatures));
+    case 'relu'
+        convolvedFeatures = max(0,convolvedFeatures);
+    case 'tanh'
+        convolvedFeatures = tanh(convolvedFeatures);
+    case 'softsign'
+        convolvedFeatures = convolvedFeatures ./ (1 + abs(convolvedFeatures));
+    otherwise
+        fprintf('error: no such nonlieartype%s',nonlineartype);
+end
 end
 

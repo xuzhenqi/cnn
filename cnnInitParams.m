@@ -1,44 +1,47 @@
-function theta = cnnInitParams(imageDim,filterDim,numFilters,...
-                                poolDim,numClasses)
-% Initialize parameters for a single layer convolutional neural
-% network followed by a softmax layer.
+function theta = cnnInitParams(cnnConfig)
+% Initialize parameters
 %                            
 % Parameters:
-%  imageDim   -  height/width of image
-%  filterDim  -  dimension of convolutional filter                            
-%  numFilters -  number of convolutional filters
-%  poolDim    -  dimension of pooling area
-%  numClasses -  number of classes to predict
-%
+%  cnnConfig    - cnn configuration variable
 %
 % Returns:
-%  theta      -  unrolled parameter vector with initialized weights
+%  theta      -  parameter structure
 
-%% Initialize parameters randomly based on layer sizes.
-assert(filterDim < imageDim,'filterDim must be less that imageDim');
-
-Wc = 1e-1*randn(filterDim,filterDim,numFilters);
-
-outDim = imageDim - filterDim + 1; % dimension of convolved image
-
-% assume outDim is multiple of poolDim
-assert(mod(outDim,poolDim)==0,...
-       'poolDim must divide imageDim - filterDim + 1');
-
-outDim = outDim/poolDim;
-hiddenSize = outDim^2*numFilters;
-
-% we'll choose weights uniformly from the interval [-r, r]
-r  = sqrt(6) / sqrt(numClasses+hiddenSize+1);
-Wd = rand(numClasses, hiddenSize) * 2 * r - r;
-
-bc = zeros(numFilters, 1);
-bd = zeros(numClasses, 1);
-
-% Convert weights and bias gradients to the vector form.
-% This step will "unroll" (flatten and concatenate together) all 
-% your parameters into a vector, which can then be used with minFunc. 
-theta = [Wc(:) ; Wd(:) ; bc(:) ; bd(:)];
-
+numLayers = size(cnnConfig.layer,2);
+for i = 1 : numLayers
+    tempLayer = cnnConfig.layer{i};
+    switch tempLayer.type
+        case 'input'
+            theta.W{i} = [];
+            theta.b{i} = [];
+            row = tempLayer.dimension(1);
+            col = tempLayer.dimension(2);
+            channel = tempLayer.dimension(3);
+        case 'conv'        
+            row = row + 1 - tempLayer.filterDim(1);
+            col = col + 1 - tempLayer.filterDim(2);          
+            theta.W{i} = 1e-1*randn(row,col,channel,tempLayer.numFilters);
+            channel = tempLayer.numFilters;
+            theta.b{i} = zeros(channel, 1);
+        case 'pool'
+            theta.W{i} = [];
+            theta.b{i} = [];
+            row = int32(row/tempLayer.poolDim(1));
+            col = int32(col/tempLayer.poolDim(2));
+        case 'stack2line'
+            theta.W{i} = [];
+            theta.b{i} = [];
+            row = row * col * channel;
+            col = 1;
+            channel = 1;
+            dimension = row;
+        case {'sigmoid','tanh','relu','softmax','softsign'}
+            % initialisation of dnn method
+            r = sqrt(6) ./ sqrt(double(dimension) + tempLayer.dimension);
+            theta.W{i} = rand(tempLayer.dimension, dimension) * 2 .* r - r;
+            dimension = tempLayer.dimension;
+            theta.b{i} = zeros(dimension, 1);
+    end
+end
 end
 
