@@ -1,4 +1,4 @@
-function convolvedFeatures = cnnConvolve(images, W, b, nonlineartype, con_matrix)
+function convolvedFeatures = cnnConvolve(images, W, b, nonlineartype, con_matrix, shape)
 %cnnConvolve Returns the convolution of the features given by W and b with
 %the given images
 %
@@ -32,6 +32,10 @@ if ~exist('nonlineartype','var')
     nonlineartype = 'sigmoid';
 end
 
+if ~exist('shape','var')
+    shape = 'valid';
+end
+
 [imageDimRow, imageDimCol,~, numImages] = size(images);
 convDimRow = imageDimRow - filterDimRow + 1;
 convDimCol = imageDimCol - filterDimCol + 1;
@@ -57,7 +61,7 @@ for imageNum = 1:numImages
 
             % Convolve "filter" with "im", adding the result to convolvedImage
             % be sure to do a 'valid' convolution
-            convolvedImage = convolvedImage + conv2(im, filter, 'valid');
+            convolvedImage = convolvedImage + conv2(im, filter, shape);
           end
             % Add the bias unit
             convolvedImage = convolvedImage + b(filterNum);
@@ -74,6 +78,8 @@ switch nonlineartype
         convolvedFeatures = tanh(convolvedFeatures);
     case 'softsign'
         convolvedFeatures = convolvedFeatures ./ (1 + abs(convolvedFeatures));
+    case 'none'
+        % don't do nonlinearty
     otherwise
         fprintf('error: no such nonlieartype%s',nonlineartype);
 end

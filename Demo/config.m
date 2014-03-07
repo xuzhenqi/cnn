@@ -22,4 +22,6 @@ cnnConfig.layer{6}.dimension = 60;
 
 cnnConfig.layer{7}.type = 'softmax';
 cnnConfig.layer{7}.dimension = 10;
+
+cnnConfig.costFun = 'crossEntropy';
 end
