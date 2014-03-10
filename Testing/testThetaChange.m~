@@ -1,8 +1,0 @@
-% testThetaChange
-cnnConfig = config();
-Theta = cnnInitParams(cnnConfig);
-newTheta = thetaChange(Theta, 'stack2vec', cnnConfig);
-oldTheta = thetaChange(newTheta, 'vec2stack', cnnConfig);
-
-if newTheta == oldTheta
-    fprintf('The ');

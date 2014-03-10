@@ -52,7 +52,7 @@ for imageNum = 1:numImages
             weights(1:pooledDimRow*poolDim(1),1:pooledDimCol*poolDim(2),filterNum,imageNum) = col2im(temp, poolDim,[pooledDimRow*poolDim(1) pooledDimCol*poolDim(2)], 'distinct');
             pooledFeatures(:,:,filterNum,imageNum) = reshape(m, size(pooledFeatures,1), size(pooledFeatures,2));         
         otherwise
-            error(message('cnn:cnnPool:WrongLayertypes'));
+            error('wrongLayertype: %s',pooltypes);
     end
     end
 end

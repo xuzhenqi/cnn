@@ -24,7 +24,9 @@ switch type
     case 'tanh'
         output = tanh(linTrans);
     case 'softmax'
-        output = softmax(linTrans);
+        % Attention: the softmax() in neural network toolbox can not be used here.
+        expLinTrans = exp(linTrans);
+        output = expLinTrans ./ repmat(sum(expLinTrans),size(expLinTrans,1),1);
     case 'softsign'
         output = x ./ (1 + abs(x));
 end
