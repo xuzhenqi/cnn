@@ -113,7 +113,7 @@ for l = l - 1 : -1 : 2
                     for c = 1 : numChannel
                         for j = 1 : size(temp{l + 1}.gradBefore, 3)
                             if cnnConfig.layer{l + 1}.conMatrix(c,j) ~= 0
-                                temp{l}.gradAfter(:,:,c,i) = temp{l}.gradAfter(:,:,c,i) + conv2(temp{l + 1}.gradBefore(:,:,j,i), rot90(theta{l + 1}.W(:,:,c,j)), 'full');
+                                temp{l}.gradAfter(:,:,c,i) = temp{l}.gradAfter(:,:,c,i) + conv2(temp{l + 1}.gradBefore(:,:,j,i), theta{l + 1}.W(:,:,c,j), 'full');
                             end
                         end
                     end

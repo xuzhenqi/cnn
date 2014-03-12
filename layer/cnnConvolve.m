@@ -63,10 +63,10 @@ for imageNum = 1:numImages
             % be sure to do a 'valid' convolution
             convolvedImage = convolvedImage + conv2(im, filter, shape);
           end
-            % Add the bias unit
-            convolvedImage = convolvedImage + b(filterNum);
-            convolvedFeatures(:, :, filterNum, imageNum) = convolvedImage;
+            % Add the bias unit     
       end
+      convolvedImage = convolvedImage + b(filterNum);
+      convolvedFeatures(:, :, filterNum, imageNum) = convolvedImage;
   end
 end
 switch nonlineartype
