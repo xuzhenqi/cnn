@@ -41,10 +41,10 @@ for imageNum = 1:numImages
         case 'meanpool'
             poolConvolvedFeatures = conv2(features,poolFilter,'valid');
             pooledFeatures(:,:,filterNum,imageNum) = poolConvolvedFeatures(1:poolDim:end,1:poolDim:end); 
+%         case 'maxpool'
+%             % Todo : this is need to be optimized.
+%             pooledFeatures(:,:,filterNum,imageNum) = blockproc(features,poolDim,@maxblock);
         case 'maxpool'
-            % Todo : this is need to be optimized.
-            pooledFeatures(:,:,filterNum,imageNum) = blockproc(features,poolDim,@maxblock);
-        case 'newpool'
             temp = im2col(features, poolDim, 'distinct');
             [m, i] = max(temp);
             temp = zeros(size(temp));
@@ -61,6 +61,6 @@ end
 end
  
 function b= maxblock(a)
-    b = max(max(a));
+    b = max(max(a.data));
 end
 

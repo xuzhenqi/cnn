@@ -1,34 +1,45 @@
 function cnnConfig = configTestGradient()
-cnnConfig.layer{1}.type = 'input';
-cnnConfig.layer{1}.dimension = [28 28 1];
 
-cnnConfig.layer{2}.type = 'conv';
-cnnConfig.layer{2}.filterDim = [9 9];
-cnnConfig.layer{2}.numFilters = 3;
-cnnConfig.layer{2}.nonLinearType = 'sigmoid';
-cnnConfig.layer{2}.conMatrix = ones(cnnConfig.layer{1}.dimension(3),cnnConfig.layer{2}.numFilters);
+l = 1;
 
-cnnConfig.layer{3}.type = 'pool';
-cnnConfig.layer{3}.poolDim = [2 2];
-cnnConfig.layer{3}.poolType = 'meanpool';
+cnnConfig.layer{l}.type = 'input';
+cnnConfig.layer{l}.dimension = [28 28 1];
+l = l + 1;
 
-cnnConfig.layer{4}.type = 'conv';
-cnnConfig.layer{4}.filterDim = [5 5];
-cnnConfig.layer{4}.numFilters = 4;
-cnnConfig.layer{4}.nonLinearType = 'sigmoid';
-cnnConfig.layer{4}.conMatrix = ones(3,4);
+cnnConfig.layer{l}.type = 'conv';
+cnnConfig.layer{l}.filterDim = [9 9];
+cnnConfig.layer{l}.numFilters = 3;
+cnnConfig.layer{l}.nonLinearType = 'tanh';
+cnnConfig.layer{l}.conMatrix = ones(1,3);
+l = l + 1;
 
-cnnConfig.layer{5}.type = 'pool';
-cnnConfig.layer{5}.poolDim = [2 2];
-cnnConfig.layer{5}.poolType = 'meanpool';
+cnnConfig.layer{l}.type = 'pool';
+cnnConfig.layer{l}.poolDim = [2 2];
+cnnConfig.layer{l}.poolType = 'meanpool';
+l = l + 1;
 
-cnnConfig.layer{6}.type = 'stack2line';
+cnnConfig.layer{l}.type = 'conv';
+cnnConfig.layer{l}.filterDim = [5 5];
+cnnConfig.layer{l}.numFilters = 4;
+cnnConfig.layer{l}.nonLinearType = 'tanh';
+cnnConfig.layer{l}.conMatrix = ones(3,4);
+l = l + 1;
 
-cnnConfig.layer{7}.type = 'sigmoid';
-cnnConfig.layer{7}.dimension = 60;
+cnnConfig.layer{l}.type = 'pool';
+cnnConfig.layer{l}.poolDim = [2 2];
+cnnConfig.layer{l}.poolType = 'maxpool';
+l = l + 1;
 
-cnnConfig.layer{8}.type = 'softmax';
-cnnConfig.layer{8}.dimension = 10;
+cnnConfig.layer{l}.type = 'stack2line';
+l = l + 1;
+
+cnnConfig.layer{l}.type = 'tanh';
+cnnConfig.layer{l}.dimension = 60;
+l = l + 1;
+
+cnnConfig.layer{l}.type = 'softmax';
+cnnConfig.layer{l}.dimension = 10;
+l = l + 1;
 
 cnnConfig.costFun = 'crossEntropy';
 end

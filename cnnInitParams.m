@@ -33,7 +33,7 @@ for i = 1 : numLayers
             theta{i}.W = 1e-1*randn(meta.paramsize{i});
             numParams(i,:) = [tempLayer.filterDim(1)*tempLayer.filterDim(2)*channel*tempLayer.numFilters tempLayer.numFilters];
             channel = tempLayer.numFilters;
-            theta{i}.b = zeros(channel, 1);
+            theta{i}.b = ones(channel, 1);
             meta.layersize{i} = [row col channel];
         case 'pool'
             theta{i}.W = [];
@@ -56,7 +56,7 @@ for i = 1 : numLayers
             theta{i}.W = rand(tempLayer.dimension, dimension) * 2 .* r - r;
             numParams(i,:) = [tempLayer.dimension*dimension tempLayer.dimension];
             dimension = tempLayer.dimension;
-            theta{i}.b = zeros(dimension, 1);
+            theta{i}.b = ones(dimension, 1);
             meta.layersize{i} = dimension;
             
     end

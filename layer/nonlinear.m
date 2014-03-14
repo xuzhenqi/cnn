@@ -1,4 +1,4 @@
-function output = nonlinear(input,W,b,type)
+function [output, linTrans] = nonlinear(input,W,b,type,norm)
 %sigmoid computes nonlinear transformation of the input
 % 
 % Parameters:
@@ -30,4 +30,9 @@ switch type
     case 'softsign'
         output = x ./ (1 + abs(x));
 end
+
+if exist('norm','var')
+    % Todo
+end
+
 end
