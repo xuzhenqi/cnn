@@ -1,4 +1,4 @@
-function convolvedFeatures = cnnConvolve(images, W, b, nonlineartype, con_matrix, shape)
+function [convolvedFeatures, linTrans] = cnnConvolve(images, W, b, nonlineartype, con_matrix, shape)
 %cnnConvolve Returns the convolution of the features given by W and b with
 %the given images
 %
@@ -69,6 +69,7 @@ for imageNum = 1:numImages
       convolvedFeatures(:, :, filterNum, imageNum) = convolvedImage;
   end
 end
+linTrans = convolvedFeatures;
 switch nonlineartype
     case 'sigmoid'
         convolvedFeatures = 1./(1+exp(-convolvedFeatures));
@@ -77,6 +78,7 @@ switch nonlineartype
     case 'tanh'
         convolvedFeatures = tanh(convolvedFeatures);
     case 'softsign'
+        
         convolvedFeatures = convolvedFeatures ./ (1 + abs(convolvedFeatures));
     case 'none'
         % don't do nonlinearty

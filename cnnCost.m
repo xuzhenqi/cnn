@@ -42,13 +42,15 @@ for l = 2 : numLayers
     tempTheta = theta{l};
     switch tempLayer.type
         case 'conv'
-            temp{l}.after = cnnConvolve(temp{l-1}.after, tempTheta.W, tempTheta.b, tempLayer.nonLinearType, tempLayer.conMatrix);         
+            [temp{l}.after, temp{l}.linTrans] = cnnConvolve(temp{l-1}.after, tempTheta.W, tempTheta.b, tempLayer.nonLinearType, tempLayer.conMatrix);         
         case 'pool'
             [temp{l}.after, temp{l}.weights] = cnnPool(tempLayer.poolDim, temp{l-1}.after, tempLayer.poolType);
         case 'stack2line'
             temp{l}.after = reshape(temp{l-1}.after, [], numImages);
-        case {'sigmoid','tanh','relu','softmax','softsign'}
+        case {'sigmoid','tanh','relu','softmax'}
             temp{l}.after = nonlinear(temp{l-1}.after, tempTheta.W, tempTheta.b, tempLayer.type);
+        case 'softsign'
+            [temp{l}.after, temp{l}.linTrans] = nonlinear(temp{l-1}.after, tempTheta.W, tempTheta.b, tempLayer.type);
     end
     assert(isequal(size(temp{l}.after),[layersizes{l} numImages]),'layersize do not match at layer %d\n',l);
 end
@@ -85,6 +87,21 @@ for l = numLayers-1 : -1 : 2
     switch tempLayer.type
         case 'sigmoid'
             temp{l}.gradBefore = theta{l + 1}.W' * temp{l + 1}.gradBefore .* temp{l}.after .* (1 - temp{l}.after); 
+            grad{l}.W = temp{l}.gradBefore * temp{l - 1}.after' / numImages;
+            grad{l}.b = mean(temp{l}.gradBefore, 2);
+            
+        case 'relu'
+            temp{l}.gradBefore = theta{l + 1}.W' * temp{l + 1}.gradBefore .* (temp{l}.after > 0);
+            grad{l}.W = temp{l}.gradBefore * temp{l - 1}.after' / numImages;
+            grad{l}.b = mean(temp{l}.gradBefore, 2);
+        
+        case 'tanh'
+            temp{l}.gradBefore = theta{l + 1}.W' * temp{l + 1}.gradBefore .* (1 - temp{l}.after .^ 2);
+            grad{l}.W = temp{l}.gradBefore * temp{l - 1}.after' / numImages;
+            grad{l}.b = mean(temp{l}.gradBefore, 2);
+            
+        case 'softsign'
+            temp{l}.gradBefore = theta{l + 1}.W' * temp{l + 1}.gradBefore ./ (1 + abs(x) .^ 2);
             grad{l}.W = temp{l}.gradBefore * temp{l - 1}.after' / numImages;
             grad{l}.b = mean(temp{l}.gradBefore, 2);
             
@@ -136,6 +153,12 @@ for l = l - 1 : -1 : 2
             switch tempLayer.nonLinearType
                 case 'sigmoid'
                     temp{l}.gradBefore = temp{l + 1}.gradBefore .* temp{l}.after .* (1 - temp{l}.after);
+                case 'tanh'
+                    temp{l}.gradBefore = temp{l + 1}.gradBefore .* (1 - temp{l}.after .^ 2);
+                case 'softsign'
+                    temp{l}.gradBefore = temp{l + 1}.gradBefore ./ (1 + abs(temp{l}.linTrans) .^ 2);
+                case 'relu'
+                    temp{l}.gradBefore = temp{l + 1}.gradBefore .* (temp{l}.after > 0);
             end
             tempW = zeros([size(theta{l}.W) numImages]); 
             numInputMap = size(tempW, 3);
