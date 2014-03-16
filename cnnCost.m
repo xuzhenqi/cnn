@@ -61,6 +61,8 @@ end
 if pred
     [~,preds] = max(temp{numLayers}.after,[],1);
     preds = preds';
+    cost = 0;
+    grad = 0;
     return;
 end;
 
@@ -101,7 +103,7 @@ for l = numLayers-1 : -1 : 2
             grad{l}.b = mean(temp{l}.gradBefore, 2);
             
         case 'softsign'
-            temp{l}.gradBefore = theta{l + 1}.W' * temp{l + 1}.gradBefore ./ (1 + abs(x) .^ 2);
+            temp{l}.gradBefore = theta{l + 1}.W' * temp{l + 1}.gradBefore ./ ((1 + abs(temp{l}.linTrans)) .^ 2);
             grad{l}.W = temp{l}.gradBefore * temp{l - 1}.after' / numImages;
             grad{l}.b = mean(temp{l}.gradBefore, 2);
             
@@ -156,7 +158,7 @@ for l = l - 1 : -1 : 2
                 case 'tanh'
                     temp{l}.gradBefore = temp{l + 1}.gradBefore .* (1 - temp{l}.after .^ 2);
                 case 'softsign'
-                    temp{l}.gradBefore = temp{l + 1}.gradBefore ./ (1 + abs(temp{l}.linTrans) .^ 2);
+                    temp{l}.gradBefore = temp{l + 1}.gradBefore ./ ((1 + abs(temp{l}.linTrans)) .^ 2);
                 case 'relu'
                     temp{l}.gradBefore = temp{l + 1}.gradBefore .* (temp{l}.after > 0);
             end

@@ -6,11 +6,11 @@ cnnConfig.layer{2}.type = 'conv';
 cnnConfig.layer{2}.filterDim = [9 9];
 cnnConfig.layer{2}.numFilters = 20;
 cnnConfig.layer{2}.nonLinearType = 'sigmoid';
-cnnConfig.layer{2}.conMatrix = [];
+cnnConfig.layer{2}.conMatrix = ones(1,20);
 
 cnnConfig.layer{3}.type = 'pool';
 cnnConfig.layer{3}.poolDim = [2 2];
-cnnConfig.layer{3}.poolTypes = 'mean';
+cnnConfig.layer{3}.poolType = 'meanpool';
 
 cnnConfig.layer{4}.type = 'stack2line';
 

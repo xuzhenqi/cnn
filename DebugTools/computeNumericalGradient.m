@@ -18,7 +18,7 @@ numgrad = zeros(size(theta));
 %                
 % Hint: You will probably want to compute the elements of numgrad one at a time. 
 
-epsilon = 1e-8;
+epsilon = 1e-4;
 
 for i =1:length(numgrad)
     oldT = theta(i);

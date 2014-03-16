@@ -28,7 +28,7 @@ switch type
         expLinTrans = exp(linTrans);
         output = expLinTrans ./ repmat(sum(expLinTrans),size(expLinTrans,1),1);
     case 'softsign'
-        output = x ./ (1 + abs(x));
+        output = linTrans ./ (1 + abs(linTrans));
 end
 
 if exist('norm','var')
