@@ -3,13 +3,14 @@ cnn
 
 This is a matlab-code implementation of convolutional neural network.
 
+***Notes***: This repo was deprecated. I suggest you use other deep learning tools, such as caffe, mxnet, tensorflow. They are far more easy to use.
+
 Functionality
 ---
 
 * supported layertypes : 'conv', 'sigmoid', 'maxpool', 'meanpool', 'relu', 'tanh', 'softmax', 'stack2line', 'softsign'
 * supported loss function : 'crossEntropy' 
 * supported training method : 'SGD'
-* supported computing device : 'GPU', 'CPUonly'
 * debug tools : deconvnet, display\_training, gradent\_check
 * supported demo dataset : 'MNIST', 'GENKI-R2009a'
 
@@ -58,7 +59,6 @@ Training Method
 Computing Device
 ---
 
-### GPU ###
 ### CPUonly ###
 
 Debug Tools
